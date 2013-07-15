@@ -13,6 +13,9 @@ Requires Python 2.7 and the following dependencies:
 Note: This should work with Python 2.6 if you have [Counter class](http://code.activestate.com/recipes/576611-counter-class/). 
 
 Sample Usage:
+--------
 This program works exlusively with articles downloaded from Web of Knowledge that include the "Full Record" including "Cited References".
 
+If you had all the articles from the journal Mobilization stored as `moby.bib` 
+and you wanted the analysis to be stored in a folder called `moby':
     $ python refcliq.py moby.bib -d moby
