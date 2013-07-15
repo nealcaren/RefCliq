@@ -14,4 +14,5 @@ Note: This should work with Python 2.6 if you have [Counter class](http://code.a
 
 Sample Usage:
 This program works exlusively with articles downloaded from Web of Knowledge that include the "Full Record" including "Cited References".
+
     $ python refcliq.py moby.bib -d moby
