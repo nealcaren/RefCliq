@@ -10,6 +10,8 @@ Requires Python 2.7 with the following dependencies:
 * [NetworkX](http://networkx.github.io)
 * [Community](http://perso.crans.org/aynaud/communities/)
 
+You can install `NLTK`, `Pybtex` and `NetworkX` through `easy_install` or `pip`. To use `community`, download it and store it the same directory as `RefCliq` or somewhere else in your path.
+
 Note: This should work with Python 2.6 if you have [Counter class](http://code.activestate.com/recipes/576611-counter-class/). 
 
 Sample Usage:
