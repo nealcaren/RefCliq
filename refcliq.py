@@ -703,7 +703,8 @@ def clique_report(G, articles, cliques, no_of_cites=20, output_directory=options
             outfile.write('<br><b>Journals:</b> %s \n </h2>' % journals.replace(r'\&','&') )
 
             sorted_clique = sorted(clique_references[clique], key=clique_references[clique].get, reverse=True)
-            sorted_clique = sorted(bc, key=bc.get, reverse=True)
+            if int(clique)> - 1:
+                sorted_clique = sorted(bc, key=bc.get, reverse=True)
 
             output_cites = [cite for cite in sorted_clique[:no_of_cites] if node_dict[cite]['freq'] > 4]
             output_cites.sort()
