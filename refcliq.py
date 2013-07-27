@@ -677,7 +677,10 @@ def clique_report(G, articles, cliques, no_of_cites=20, output_directory=options
     for clique in clique_references:
         for ref in clique_references[clique]:
             clique_size[clique] = clique_size.get(clique,0) + clique_references[clique][ref]
-
+    
+    #Hack to put unsorted hack last:
+    clique_size['-1'] = 0
+    
     clique_counter = 0
     for clique in  sorted(clique_size, key=clique_size.get, reverse=True):
         clique_members= [node for node in node_dict if node_dict[node]['clique']==clique]
@@ -690,7 +693,7 @@ def clique_report(G, articles, cliques, no_of_cites=20, output_directory=options
         except Exception, e:
             journals = 'None'
 
-        if int(clique) >= 0:
+        if int(clique) >= -2:
             if int(clique) == -1:
                 vocab = "Cites that didn't cluster well."
 
