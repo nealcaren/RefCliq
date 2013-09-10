@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # encoding: utf-8
 """
-cite_clusters..py
+refcliq..py
 
 Created by Neal Caren on June 26, 2013.
 neal.caren@gmail.com
@@ -12,10 +12,12 @@ networkx
 community
 
 Note: community is available from:
-"""
-'''
+http://perso.crans.org/aynaud/communities/
+
 ##note: seems to be screwing up where the person has lots of intials.###
-'''
+"""
+
+
 from pybtex.database.input import bibtex
 import itertools
 import glob
@@ -355,7 +357,7 @@ def write_reverse_directory(cite,cited_bys,output_directory,stopword_list, artic
     font-size:12px;
 }
 		</style> <body>'''
-    html_suffix = r'</body></html>'
+    html_suffix = r'''<p>Powered by <href='https://github.com/nealcaren/RefCliq' rarget="_blank">Refcliq<.</body></html>'''
     filename = make_filename(cite)
     output = open('%s/refs/%s.html' % (output_directory,filename), 'w')
     output.write(html_preface)
@@ -576,8 +578,8 @@ def get_clique_words(articles,cliques,stopword_list=[]):
 def journal_report(articles):
     #Could I have a string with all the journals and how many items from each?
     from collections import Counter
-    journals = Counter([article['journal'] for article in articles])
-    
+    journals = Counter([article['journal'] for article in articles if article['journal'] is not None])
+
     try:
         journals = ['%s (%s)' % (j.replace('\\&','&'), journals[j]) for j in sorted(journals,key=journals.get, reverse=True) if journals[j] >= 10 ]
     except:
@@ -643,7 +645,7 @@ def clique_report(G, articles, cliques, no_of_cites=20, output_directory=options
     font-size:12px;
 }
 		</style> <body>'''
-    html_suffix = r'</body></html>'
+    html_suffix = r'''<p>Powered by <href='https://github.com/nealcaren/RefCliq' rarget="_blank">Refcliq<.</body></html>'''
     table_header = [['<b>Name</b>','','<b>Centrality</b>','<b>Count</b>','<b>Keywords</b>']]
 
 
@@ -654,6 +656,7 @@ def clique_report(G, articles, cliques, no_of_cites=20, output_directory=options
         except:
             os.mkdir(dir_name)
 
+    years = sorted([article['year'] for article in articles])
 
     outfile_name = os.path.join('%s' % output_directory,'index.html')
     outfile = open(outfile_name,'wb')
@@ -661,8 +664,8 @@ def clique_report(G, articles, cliques, no_of_cites=20, output_directory=options
     journals = journal_report(articles)
     outfile.write('<h1>Cluster analysis of %s articles ' % thous(len(articles)) )
     outfile.write('based on %s references cited at least %s times.' % (thous(len(G.nodes())) , node_min ) )
-
     outfile.write('<h1>Major Journals: %s\n ' % journals)
+    outfile.write('<h1>Years: %s-%s\n ' % (years[0],years[-1]))
     outfile.write('<h1>Clusters:' )
     stopword_list = stopwords(articles)
         
