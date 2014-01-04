@@ -422,15 +422,77 @@ def d3_export(most_cited, most_paired, output_directory=options.directory_name):
     nodes = [{'group': cliques[node]  ,
               'name' : node ,
               'nodeSize': int(cited_works[node]['count']) } for node in sorted(most_cited)]
-
     links  = [{'source': node_key[p[0]],
               'target' : node_key[p[1]],
               'value': int(p[2]['weight']) } for p in most_paired]
-
     d3_data = {'nodes': nodes, 'links' : links}
     json.dump(d3_data,open(outfile_name,'wb'))
 
+def gexf_export(most_cited, most_paired, output_directory=options.directory_name):
+	#Exports network data in .gexf format (readable by Gephi)
+	#John Mulligan -- not the prettiest, but it gets the job done and translates all the information exported in the d3_export module.
+    
+    from xml.etree import ElementTree as et
+    from xml.etree.ElementTree import Element, SubElement, tostring
+    import os    
+    
+    try:
+        os.stat(output_directory)
+    except:
+        os.mkdir(output_directory)
+    outfile_name = os.path.join('%s' % output_directory,'cites.gexf')
+    node_key ={node:counter for counter,node in enumerate(sorted(most_cited))}
 
+    ##Create the tree
+    et.register_namespace('',"http://www.gexf.net/1.2draft")
+    et.register_namespace('viz','http://www.gexf.net/1.2draft/viz')
+    tree = et.ElementTree()
+    gexf = et.Element("gexf",{"xmlns":"http://www.gexf.net/1.2draft","version":"1.2"})
+    tree._setroot(gexf)
+    
+    graph = SubElement(gexf,"graph",{'defaultedgetype':'undirected','mode':'static'})
+    #more (graph) header information
+    graph_attributes = SubElement(graph,"attributes",{'class':'node','mode':'static'})
+    graph_mod_att = SubElement(graph_attributes,"attribute",{'id':'modularity_class','title':'Modularity Class','type':'integer'})
+    graph_mod_att_content = SubElement(graph_mod_att,'default')
+    graph_mod_att_content.text = "0"
+    
+    nodes = SubElement(graph,"nodes")
+    edges = SubElement(graph,"edges")
+
+    
+    #write nodes
+    for n in sorted(most_cited):
+    	#create node in xml tree
+    	node = SubElement(nodes, "node")
+    	node.attrib["id"] = str(node_key[n])
+    	node.attrib["label"] = n
+    	#add attributes: clique, name
+    	attributes_wrapper = SubElement(node, "attvalues")
+    	clique_id = str(cliques[n])
+    	clique = SubElement(attributes_wrapper,"attvalue",{"for":"modularity_class","value":clique_id})
+    	clique.text = ' '
+    	#add attribute: visualization size
+    	size = str(cited_works[n]['count'])
+    	viz = SubElement(node,"{http://www.gexf.net/1.2draft/viz}size",{"value":size})
+    
+    #write edges
+    
+    c = 1
+    
+    for p in most_paired:
+    	id = str(c)
+    	source = str(node_key[p[0]])
+    	target = str(node_key[p[1]])
+    	value = str(p[2]['weight'])
+    	edge = SubElement(edges,"edge",{'id':id,'source':source,'target':target,'value':value})
+    
+    	c+=1   
+    
+    
+    tree.write(outfile_name, xml_declaration = True, encoding = 'utf-8', method = 'xml')
+	
+	
 def make_partition(G,min=5):
     #clustering but removes small clusters.
     partition = community.best_partition(G)
@@ -758,6 +820,7 @@ if __name__ == '__main__':
         G.add_node(node,freq= cited_works[node]['count'], group = cliques[node], abstract = cited_works[node]['abstract'])
 
     d3_export(most_cited,most_paired, output_directory=options.directory_name)
+    gexf_export(most_cited,most_paired, output_directory=options.directory_name)
     clique_report(G, articles, cliques, no_of_cites=25)
 
 
