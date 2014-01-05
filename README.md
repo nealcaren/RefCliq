@@ -35,6 +35,7 @@ The contents of the output directory include:
 * `index.html` which is the cluster report.
 * `refs` folder which contains information about listed references.
 * `cites.json` which stores the resulting reference network for mapping in a format that d3js reads.
+* `cites.gexf` ... Gephi format.
     
 To run a standard analysis of the files, `us_2012_a.bib`, `us_2012_b.bib`, and , `us_2012_c.bib` and save the results in a folder called `us_sociology`.
 
